@@ -1,0 +1,44 @@
+name: Daily Selenium Run
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "0 2 * * *" # täglich 01:00 UTC = 02:00/03:00 Berlin
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: "stable"
+          install-dependencies: true
+          install-chromedriver: false
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run script
+        env:
+          SJ_USERNAME: ${{ secrets.SJ_USERNAME }}
+          SJ_PASSWORD: ${{ secrets.SJ_PASSWORD }}
+        run: |
+          python script.py | tee run.log
+
+      - name: Upload logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-run-log
+          path: run.log
