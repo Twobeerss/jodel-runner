@@ -3,7 +3,7 @@ name: Daily Selenium Run
 on:
   workflow_dispatch: {}
   schedule:
-    - cron: "0 2 * * *" # täglich 01:00 UTC = 02:00/03:00 Berlin
+    - cron: "0 0 * * *" # täglich 01:00 UTC = 02:00/03:00 Berlin
 
 jobs:
   run-script:
